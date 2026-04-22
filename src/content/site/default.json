@@ -1,0 +1,10 @@
+{
+  "team_name": "Your Team",
+  "tagline": "A small team shipping thoughtful software.",
+  "about": "Tell the story of your team here — how you started, what you care about, and the kind of work you take on.\n\nEdit this in the Decap CMS at /admin, or directly in src/content/site/default.json.",
+  "contact_email": "hello@example.com",
+  "socials": {
+    "github": "https://github.com",
+    "x": "https://x.com"
+  }
+}

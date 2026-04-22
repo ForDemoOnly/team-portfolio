@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm --version)",
+      "Bash(npm create *)",
+      "Bash(mv celestial-centauri/* celestial-centauri/.* .)",
+      "Bash(rmdir celestial-centauri *)",
+      "Bash(npx astro *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(npm uninstall *)",
+      "Bash(curl *)"
+    ]
+  }
+}

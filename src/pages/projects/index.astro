@@ -1,0 +1,50 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { getProjects } from '@/lib/content';
+import { fakeBytes, fakePing, hexId, tcpFlag } from '@/lib/fx';
+
+const projects = await getProjects();
+const totalBytes = projects.length > 1000
+  ? `${projects.length * 892} KB`
+  : `${(projects.length * 0.892).toFixed(2)} MB`;
+---
+
+<Layout title="Projects">
+  <section class="mx-auto max-w-6xl px-6 pt-12 pb-24">
+    <div class="flex items-end justify-between gap-4 flex-wrap">
+      <div>
+        <p class="font-pixel text-[11px] tracking-wider text-[var(--muted)]">SNIFFER › CAPTURE</p>
+        <h1 class="h-pixel text-[clamp(28px,5vw,48px)] mt-3 text-[var(--amber)] glow-amber">./projects.pcap</h1>
+      </div>
+      <div class="text-[11px] font-pixel tracking-wider text-[var(--muted)] text-right">
+        <div><span class="text-[var(--green)]">{String(projects.length).padStart(3, '0')}</span> packets</div>
+        <div>{totalBytes} · 0 dropped</div>
+      </div>
+    </div>
+
+    <!-- packet table -->
+    <div class="mt-8 px-frame is-amber">
+      <div class="px-inner">
+        <div class="grid grid-cols-[3ch_6ch_1fr_auto_auto_auto] gap-4 px-4 py-2 text-[10px] font-pixel tracking-wider text-[var(--muted)] border-b border-[var(--line-2)]">
+          <span>#</span><span>flg</span><span>host · summary</span><span>bytes</span><span>rtt</span><span>state</span>
+        </div>
+        {projects.map((p, i) => (
+          <a href={`/projects/${p.slug}`} class="packet-row hover:text-[var(--cyan)]">
+            <span class="text-[var(--muted)] tabular-nums">{String(i).padStart(2, '0')}</span>
+            <span class={`flag is-${['cyan','magenta','amber','green'][i%4]}`}>{tcpFlag(i)}</span>
+            <span class="truncate">
+              <span class="text-[var(--cyan)]">{p.title}</span>
+              <span class="text-[var(--muted)]"> · 0x{hexId(p.slug, 4)}  · {p.summary}</span>
+            </span>
+            <span class="text-[var(--amber)] tabular-nums">{fakeBytes(p.slug)}</span>
+            <span class="text-[var(--violet)] tabular-nums">{fakePing(p.slug)}</span>
+            <span class={`tag ${p.featured ? 'is-magenta' : 'is-green'}`}>{p.featured ? 'FEAT' : 'OK'}</span>
+          </a>
+        ))}
+        {projects.length === 0 && (
+          <div class="p-8 text-center text-[var(--muted)] font-pixel tracking-widest">[ NO PACKETS CAPTURED ]</div>
+        )}
+      </div>
+    </div>
+  </section>
+</Layout>

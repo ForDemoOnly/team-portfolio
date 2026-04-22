@@ -1,0 +1,73 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { getSiteSettings, getTeamMembers, getProjects } from '@/lib/content';
+import { hexId } from '@/lib/fx';
+
+const settings = await getSiteSettings();
+const team = await getTeamMembers();
+const projects = await getProjects();
+const featured = projects.filter((p) => p.featured).length;
+---
+
+<Layout title="About">
+  <section class="mx-auto max-w-4xl px-6 pt-12 pb-24">
+    <p class="font-pixel text-[11px] tracking-wider text-[var(--muted)]">SYSTEM › OVERVIEW</p>
+    <h1 class="h-pixel text-[clamp(28px,5vw,48px)] mt-3 text-[var(--cyan)] glow-cyan">./about.bin</h1>
+
+    <!-- uname -a style system block -->
+    <div class="mt-8 px-frame is-amber">
+      <div class="px-inner p-5 md:p-6 text-[13px] leading-7">
+        <div class="grid sm:grid-cols-[10ch_1fr] gap-x-4">
+          <span class="text-[var(--muted)]">SYSTEM</span><span class="text-[var(--amber)]">{settings.team_name}</span>
+          <span class="text-[var(--muted)]">VERSION</span><span>4.2.1-stable</span>
+          <span class="text-[var(--muted)]">KERNEL</span><span>humans / multi-core</span>
+          <span class="text-[var(--muted)]">NODES</span><span>{team.length} · <span class="text-[var(--green)]">all online</span></span>
+          <span class="text-[var(--muted)]">PROJECTS</span><span>{projects.length} loaded · {featured} featured</span>
+          <span class="text-[var(--muted)]">UPTIME</span><span>∞</span>
+          <span class="text-[var(--muted)]">HASH</span><span class="text-[var(--muted)]">0x{hexId(settings.team_name, 8)}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mission -->
+    <div class="mt-8">
+      <p class="prompt-arrow font-pixel text-[11px] tracking-wider text-[var(--green)]">cat ./mission.md</p>
+      <h2 class="text-2xl md:text-4xl leading-[1.2] mt-3">{settings.tagline}</h2>
+    </div>
+
+    {settings.about && (
+      <div class="mt-8 text-[15px] leading-7 text-[var(--fg)]/90 whitespace-pre-line">
+        {settings.about}
+      </div>
+    )}
+
+    <hr class="hr-dashed my-10" />
+
+    <!-- The "stack" section in a byte-dump feel -->
+    <div class="grid sm:grid-cols-3 gap-4">
+      <div class="px-frame">
+        <div class="px-inner p-4">
+          <p class="font-pixel text-[10px] tracking-wider text-[var(--cyan)]">STACK · AI</p>
+          <p class="text-[12px] mt-2 text-[var(--fg)]/80">embeddings · agents · inference · evals</p>
+        </div>
+      </div>
+      <div class="px-frame">
+        <div class="px-inner p-4">
+          <p class="font-pixel text-[10px] tracking-wider text-[var(--magenta)]">STACK · WEB</p>
+          <p class="text-[12px] mt-2 text-[var(--fg)]/80">typescript · astro · postgres · edge</p>
+        </div>
+      </div>
+      <div class="px-frame">
+        <div class="px-inner p-4">
+          <p class="font-pixel text-[10px] tracking-wider text-[var(--amber)]">STACK · INFRA</p>
+          <p class="text-[12px] mt-2 text-[var(--fg)]/80">docker · linux · terraform · observability</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12">
+      <p class="prompt font-pixel text-[11px] tracking-wider text-[var(--cyan)]">echo $EOF</p>
+      <p class="mt-1 text-[var(--green)] glow-green">done.<span class="cursor"></span></p>
+    </div>
+  </section>
+</Layout>
