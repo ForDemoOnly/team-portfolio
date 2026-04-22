@@ -13,7 +13,7 @@ local_backend: true
 
 backend:
   name: github
-  repo: CHANGEME-github-user/CHANGEME-repo   # e.g. tptindev/team-portfolio
+  repo: ForDemoOnly/team-portfolio
   branch: main
   base_url: https://api.netlify.com
   auth_endpoint: auth
