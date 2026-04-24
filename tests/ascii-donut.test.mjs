@@ -20,6 +20,13 @@ test('layout renders a background ascii donut behind translucent surfaces', asyn
   assert.match(css, /\.quiet-data-rail/);
   assert.match(css, /\.packet-trail/);
   assert.match(css, /\.quiet-hud-label/);
+  assert.match(layout, /data-ascii-earth/);
+  assert.match(layout, /data-ascii-moon/);
+  assert.match(layout, /data-vn-marker/);
+  assert.match(layout, /data-ascii-earth-frame/);
+  assert.match(layout, /data-ascii-moon-frame/);
+  assert.match(css, /\.ascii-earth/);
+  assert.match(css, /\.ascii-moon/);
 });
 
 test('ascii donut animation is time-based and refreshes on tab visibility changes', async () => {
@@ -40,4 +47,15 @@ test('ascii donut remounts after Astro page transitions', async () => {
   assert.match(layout, /existing\?\.destroy/);
   assert.match(layout, /window\.__asciiDonutBackground/);
   assert.match(layout, /window\.__asciiDonutBackgroundListenerStarted/);
+});
+
+test('ascii earth and moon are rendered dynamically like the donut', async () => {
+  const layout = await readFile(new URL('../src/layouts/Layout.astro', import.meta.url), 'utf8');
+
+  assert.match(layout, /function renderAsciiEarth\(/);
+  assert.match(layout, /function renderAsciiMoon\(/);
+  assert.match(layout, /document\.querySelector\('\[data-ascii-earth-frame\]'\)/);
+  assert.match(layout, /document\.querySelector\('\[data-ascii-moon-frame\]'\)/);
+  assert.match(layout, /earth\.textContent = renderAsciiEarth/);
+  assert.match(layout, /moon\.textContent = renderAsciiMoon/);
 });
