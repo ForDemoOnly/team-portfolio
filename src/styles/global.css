@@ -544,79 +544,6 @@ a { color: inherit; text-decoration: none; }
   bottom: 10vh;
 }
 
-.ascii-orb {
-  position: absolute;
-  font-family: var(--font-mono);
-  color: color-mix(in oklab, var(--cyan) 30%, var(--fg));
-  text-shadow:
-    0 0 10px color-mix(in oklab, var(--cyan) 18%, transparent),
-    0 0 18px color-mix(in oklab, var(--magenta) 10%, transparent);
-  opacity: 0.24;
-}
-
-.ascii-orb pre,
-.ascii-earth__frame,
-.ascii-moon__frame {
-  margin: 0;
-  white-space: pre;
-  line-height: 1;
-  letter-spacing: 0;
-  font-size: 9px;
-}
-
-.ascii-earth__frame,
-.ascii-moon__frame {
-  min-width: max-content;
-}
-
-.ascii-orb__label {
-  margin-bottom: 0.45rem;
-  font-family: var(--font-pixel);
-  font-size: 9px;
-  letter-spacing: 0.08em;
-  color: color-mix(in oklab, var(--cyan) 24%, var(--muted));
-  text-transform: uppercase;
-}
-
-.ascii-moon {
-  top: 12vh;
-  left: 10vw;
-  animation: quietMoonFloat 26s ease-in-out infinite;
-}
-
-.ascii-earth {
-  left: 8vw;
-  bottom: 7vh;
-  animation: quietEarthFloat 32s ease-in-out infinite;
-}
-
-.ascii-earth__vn {
-  position: absolute;
-  right: 5.2rem;
-  top: 5.9rem;
-  font-family: var(--font-pixel);
-  font-size: 8px;
-  letter-spacing: 0.08em;
-  color: color-mix(in oklab, var(--amber) 70%, var(--cyan));
-  text-shadow:
-    0 0 8px color-mix(in oklab, var(--amber) 35%, transparent),
-    0 0 14px color-mix(in oklab, var(--cyan) 22%, transparent);
-  opacity: 0.88;
-}
-
-.ascii-earth__vn::before {
-  content: '';
-  position: absolute;
-  left: -0.45rem;
-  top: 50%;
-  width: 0.22rem;
-  height: 0.22rem;
-  border-radius: 999px;
-  background: currentColor;
-  transform: translateY(-50%);
-  box-shadow: 0 0 6px currentColor;
-}
-
 .ascii-page-bg__shell {
   position: absolute;
   top: 12vh;
@@ -678,26 +605,6 @@ a { color: inherit; text-decoration: none; }
 }
 
 @media (max-width: 899px) {
-  .ascii-moon {
-    left: 4vw;
-    opacity: 0.16;
-  }
-
-  .ascii-earth {
-    left: 2vw;
-    bottom: 9vh;
-    opacity: 0.18;
-  }
-
-  .ascii-earth__frame {
-    font-size: 7px;
-  }
-
-  .ascii-earth__vn {
-    right: 4rem;
-    top: 4.7rem;
-  }
-
   .quiet-data-rail {
     left: 0.6rem;
     opacity: 0.22;
@@ -736,16 +643,6 @@ a { color: inherit; text-decoration: none; }
 }
 
 @media (max-width: 640px) {
-  .ascii-moon {
-    top: 10vh;
-    left: -0.5rem;
-    opacity: 0.12;
-  }
-
-  .ascii-earth {
-    display: none;
-  }
-
   .quiet-data-rail,
   .packet-trail,
   .quiet-hud-label {
@@ -775,16 +672,6 @@ a { color: inherit; text-decoration: none; }
   50% { opacity: 1; }
 }
 
-@keyframes quietMoonFloat {
-  0%, 100% { transform: translate3d(0, 0, 0); }
-  50% { transform: translate3d(0.7rem, -0.6rem, 0); }
-}
-
-@keyframes quietEarthFloat {
-  0%, 100% { transform: translate3d(0, 0, 0); }
-  50% { transform: translate3d(0.9rem, 0.7rem, 0); }
-}
-
 @keyframes quietRailDrift {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(0.8rem); }
@@ -796,8 +683,6 @@ a { color: inherit; text-decoration: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ascii-moon,
-  .ascii-earth,
   .quiet-data-rail,
   .packet-trail,
   .ascii-page-bg__shell,

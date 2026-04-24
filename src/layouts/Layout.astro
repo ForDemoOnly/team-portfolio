@@ -51,33 +51,6 @@ const pageDescription = description ?? settings.tagline;
         <div class="quiet-hud-label quiet-hud-label--left">node:a3</div>
         <div class="quiet-hud-label quiet-hud-label--top">latency:12ms</div>
         <div class="quiet-hud-label quiet-hud-label--bottom">sector_04 / uplink stable</div>
-        <div class="ascii-orb ascii-moon" data-ascii-moon>
-          <div class="ascii-orb__label">moon.sys</div>
-          <pre class="ascii-moon__frame" data-ascii-moon-frame aria-hidden="true">      _..._      
-   .-'   .''.    
-  /   .-'    \   
- |   /  .--.  |  
- |   | (    ) |  
- |   \  '--' /   
-  \   '-.__.'    
-   '-._____.-'   </pre>
-        </div>
-        <div class="ascii-orb ascii-earth" data-ascii-earth>
-          <div class="ascii-orb__label">earth.sys</div>
-          <pre class="ascii-earth__frame" data-ascii-earth-frame aria-hidden="true">          _..---.._         
-      .-''  .- .-.  ''-.     
-    .'     /  /   \     '.   
-   /      |  |  _  |      \  
-  ;   .--.|  | (_) |.--.   ; 
-  |  /    \\  \\_/ //    \\  | 
-  |  |  .-''-.___.-''-.  |  | 
-  ;  | /   .--. .--.   \\ |  ; 
-   \\ | |  /    Y    \\  | | /  
-    '.\\ \\ \\__/\\_/\\__/ / /.'   
-      '-._'-..____..-'_.-'    
-           ''------''         </pre>
-          <div class="ascii-earth__vn" data-vn-marker>VN</div>
-        </div>
       </div>
       <div class="ascii-page-bg__shell">
         <div class="ascii-page-bg__bar">
@@ -147,105 +120,12 @@ const pageDescription = description ?? settings.tagline;
           }, '');
         }
 
-        function renderAsciiEarth(frame = 0) {
-          const earthWidth = 29;
-          const earthHeight = 12;
-          const output = [];
-          const phase = frame * 0.018;
-          const palette = ' .,:;=+*#@';
-
-          for (let y = 0; y < earthHeight; y += 1) {
-            let row = '';
-            const ny = (y / (earthHeight - 1)) * 2 - 1;
-            const curve = 1 - ny * ny;
-            const radius = Math.sqrt(Math.max(0, curve));
-
-            for (let x = 0; x < earthWidth; x += 1) {
-              const nx = (x / (earthWidth - 1)) * 2 - 1;
-              if (Math.abs(nx) > radius * 1.1) {
-                row += ' ';
-                continue;
-              }
-
-              const sphereX = nx / Math.max(radius, 0.001);
-              const coast =
-                0.52 * Math.sin(sphereX * 2.8 + phase) +
-                0.28 * Math.cos(ny * 4.6 - phase * 1.4) +
-                0.18 * Math.sin((sphereX + ny) * 6.2 + phase * 0.5);
-              const cloud =
-                0.3 * Math.sin(sphereX * 9 - phase * 1.2) +
-                0.18 * Math.cos(ny * 8 + phase * 1.7);
-              const light = 0.45 + 0.55 * (sphereX * 0.7 + radius * 0.45);
-              const shade = Math.max(0, Math.min(1, light + cloud * 0.14));
-              const tone = palette[Math.max(0, Math.min(palette.length - 1, Math.floor(shade * (palette.length - 1))))];
-
-              if (Math.abs(Math.abs(nx) - radius) < 0.09) {
-                row += '.';
-              } else if (coast > 0.2) {
-                row += tone === ' ' ? '.' : tone;
-              } else {
-                row += cloud > 0.3 ? ':' : ' ';
-              }
-            }
-
-            output.push(row);
-          }
-
-          return output.join('\n');
-        }
-
-        function renderAsciiMoon(frame = 0) {
-          const moonWidth = 18;
-          const moonHeight = 10;
-          const output = [];
-          const phase = frame * 0.013;
-          const palette = ' .:-=+*#%@';
-
-          for (let y = 0; y < moonHeight; y += 1) {
-            let row = '';
-            const ny = (y / (moonHeight - 1)) * 2 - 1;
-            const curve = 1 - ny * ny;
-            const radius = Math.sqrt(Math.max(0, curve));
-
-            for (let x = 0; x < moonWidth; x += 1) {
-              const nx = (x / (moonWidth - 1)) * 2 - 1;
-              if (Math.abs(nx) > radius * 1.06) {
-                row += ' ';
-                continue;
-              }
-
-              const sphereX = nx / Math.max(radius, 0.001);
-              const light = 0.52 + 0.48 * (sphereX * 0.9 - 0.18);
-              const crater =
-                0.22 * Math.sin(sphereX * 8 + phase) +
-                0.18 * Math.cos(ny * 7 - phase * 1.3) +
-                0.08 * Math.sin((sphereX - ny) * 14);
-              const shade = Math.max(0, Math.min(1, light - crater));
-              const tone = palette[Math.max(0, Math.min(palette.length - 1, Math.floor(shade * (palette.length - 1))))];
-
-              if (Math.abs(Math.abs(nx) - radius) < 0.08) {
-                row += '.';
-              } else if (crater > 0.14) {
-                row += ':';
-              } else {
-                row += tone;
-              }
-            }
-
-            output.push(row);
-          }
-
-          return output.join('\n');
-        }
-
         function mountAsciiDonutBackground() {
           const existing = window.__asciiDonutBackground;
           if (existing?.donut?.isConnected) return;
           if (existing?.destroy) existing.destroy();
 
           const donut = document.querySelector('[data-ascii-donut-frame]');
-          const earth = document.querySelector('[data-ascii-earth-frame]');
-          const moon = document.querySelector('[data-ascii-moon-frame]');
           const media = window.matchMedia('(prefers-reduced-motion: reduce)');
           let animationFrame = 0;
 
@@ -254,8 +134,6 @@ const pageDescription = description ?? settings.tagline;
           function renderAtTime(now) {
             const frame = now * 0.024;
             donut.textContent = renderAsciiDonut(frame);
-            if (earth instanceof HTMLElement) earth.textContent = renderAsciiEarth(frame);
-            if (moon instanceof HTMLElement) moon.textContent = renderAsciiMoon(frame);
           }
 
           function stop() {
@@ -307,7 +185,7 @@ const pageDescription = description ?? settings.tagline;
           media.addEventListener('change', handleMotionChange);
           start();
 
-          window.__asciiDonutBackground = { destroy, donut, earth, moon };
+          window.__asciiDonutBackground = { destroy, donut };
         }
 
         window.__mountAsciiDonutBackground = mountAsciiDonutBackground;
