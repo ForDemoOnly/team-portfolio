@@ -35,12 +35,170 @@ const pageDescription = description ?? settings.tagline;
     <ClientRouter />
   </head>
   <body class="min-h-dvh flex flex-col">
+    <div class="ascii-page-bg" data-ascii-donut aria-label="Rotating ASCII donut background">
+      <div class="quiet-data-decor" data-quiet-decor aria-hidden="true">
+        <div class="quiet-data-rail">
+          <span>0x9F3A</span>
+          <span>sector_04</span>
+          <span>latency 12ms</span>
+          <span>uplink stable</span>
+          <span>node:a3</span>
+          <span>0x9F3A</span>
+        </div>
+        <div class="packet-trail packet-trail--top"></div>
+        <div class="packet-trail packet-trail--mid"></div>
+        <div class="packet-trail packet-trail--low"></div>
+        <div class="quiet-hud-label quiet-hud-label--left">node:a3</div>
+        <div class="quiet-hud-label quiet-hud-label--top">latency:12ms</div>
+        <div class="quiet-hud-label quiet-hud-label--bottom">sector_04 / uplink stable</div>
+      </div>
+      <div class="ascii-page-bg__shell">
+        <div class="ascii-page-bg__bar">
+          <span class="led on-magenta"></span>
+          <span>torus.exe</span>
+        </div>
+        <pre class="ascii-page-bg__frame" data-ascii-donut-frame aria-hidden="true">          ******          
+       **########**       
+     **############**     
+    *#####******#####*    
+   *####**      **####*   
+  *####*          *####*  
+  *####*          *####*  
+   *####**      **####*   
+    *#####******#####*    
+     **############**     
+       **########**       
+          ******          </pre>
+      </div>
+    </div>
     {!hideChrome && <SiteHeader settings={settings} />}
-    <main class="flex-1">
+    <main class="flex-1 site-main">
       <slot />
     </main>
     {!hideChrome && <SiteFooter settings={settings} />}
     <ClockCursorEffect />
+    <script is:inline>
+      (() => {
+        const width = 42;
+        const height = 22;
+        const luminance = '.,-~:;=!*#$@';
+
+        function renderAsciiDonut(frame = 0) {
+          const output = Array(width * height).fill(' ');
+          const depth = Array(width * height).fill(0);
+          const a = frame * 0.055;
+          const b = frame * 0.032;
+          const sinA = Math.sin(a);
+          const cosA = Math.cos(a);
+          const sinB = Math.sin(b);
+          const cosB = Math.cos(b);
+
+          for (let theta = 0; theta < Math.PI * 2; theta += 0.17) {
+            const sinTheta = Math.sin(theta);
+            const cosTheta = Math.cos(theta);
+
+            for (let phi = 0; phi < Math.PI * 2; phi += 0.08) {
+              const sinPhi = Math.sin(phi);
+              const cosPhi = Math.cos(phi);
+              const ring = 2 + cosTheta;
+              const inverseZ = 1 / (sinPhi * ring * sinA + sinTheta * cosA + 5);
+              const x = Math.floor(width / 2 + width * 0.38 * inverseZ * (cosPhi * ring * cosB - (sinPhi * ring * cosA - sinTheta * sinA) * sinB));
+              const y = Math.floor(height / 2 + height * 0.8 * inverseZ * (cosPhi * ring * sinB + (sinPhi * ring * cosA - sinTheta * sinA) * cosB));
+              const index = x + width * y;
+              const shade = Math.floor(8 * ((sinTheta * sinA - sinPhi * cosTheta * cosA) * cosB - sinPhi * cosTheta * sinA - sinTheta * cosA - cosPhi * cosTheta * sinB));
+
+              if (y >= 0 && y < height && x >= 0 && x < width && inverseZ > depth[index]) {
+                depth[index] = inverseZ;
+                output[index] = luminance[Math.max(0, Math.min(luminance.length - 1, shade))];
+              }
+            }
+          }
+
+          return output.reduce((rows, char, index) => {
+            rows += char;
+            return (index + 1) % width === 0 ? `${rows}\n` : rows;
+          }, '');
+        }
+
+        function mountAsciiDonutBackground() {
+          const existing = window.__asciiDonutBackground;
+          if (existing?.donut?.isConnected) return;
+          if (existing?.destroy) existing.destroy();
+
+          const donut = document.querySelector('[data-ascii-donut-frame]');
+          const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+          let animationFrame = 0;
+
+          if (!(donut instanceof HTMLElement)) return;
+
+          function renderAtTime(now) {
+            const frame = now * 0.024;
+            donut.textContent = renderAsciiDonut(frame);
+          }
+
+          function stop() {
+            window.cancelAnimationFrame(animationFrame);
+            animationFrame = 0;
+          }
+
+          function destroy() {
+            stop();
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            media.removeEventListener('change', handleMotionChange);
+            window.__asciiDonutBackground = null;
+          }
+
+          function tick(now) {
+            if (!donut.isConnected) {
+              destroy();
+              return;
+            }
+            renderAtTime(now);
+            animationFrame = window.requestAnimationFrame(tick);
+          }
+
+          function start() {
+            if (animationFrame || media.matches) return;
+            animationFrame = window.requestAnimationFrame(tick);
+          }
+
+          function handleVisibilityChange() {
+            if (document.visibilityState === 'visible') {
+              renderAtTime(performance.now());
+              start();
+            } else {
+              stop();
+            }
+          }
+
+          function handleMotionChange(event) {
+            if (event.matches) {
+              stop();
+              return;
+            }
+            renderAtTime(performance.now());
+            start();
+          }
+
+          renderAtTime(performance.now());
+          document.addEventListener('visibilitychange', handleVisibilityChange);
+          media.addEventListener('change', handleMotionChange);
+          start();
+
+          window.__asciiDonutBackground = { destroy, donut };
+        }
+
+        window.__mountAsciiDonutBackground = mountAsciiDonutBackground;
+        mountAsciiDonutBackground();
+
+        if (!window.__asciiDonutBackgroundListenerStarted) {
+          window.__asciiDonutBackgroundListenerStarted = true;
+          document.addEventListener('astro:page-load', () => {
+            window.__mountAsciiDonutBackground?.();
+          });
+        }
+      })();
+    </script>
     <script is:inline>
       (() => {
         if (window.__pressFeedbackStarted) return;

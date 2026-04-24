@@ -50,7 +50,9 @@ html, body {
 }
 
 body {
+  position: relative;
   min-height: 100dvh;
+  overflow-x: hidden;
   background-image:
     repeating-linear-gradient(
       to bottom,
@@ -424,6 +426,277 @@ a { color: inherit; text-decoration: none; }
 
 /* Keep the boot log from forcing horizontal page scroll on mobile */
 .boot-log { max-width: 100%; overflow-x: auto; }
+
+/* Rotating ASCII donut fixed behind the page */
+.ascii-page-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.quiet-data-decor {
+  position: absolute;
+  inset: 0;
+}
+
+.quiet-data-rail {
+  position: absolute;
+  top: 8vh;
+  left: 1.25rem;
+  display: grid;
+  gap: 0.45rem;
+  font-family: var(--font-pixel);
+  font-size: 9px;
+  line-height: 1.1;
+  letter-spacing: 0.08em;
+  color: color-mix(in oklab, var(--cyan) 26%, var(--muted));
+  opacity: 0.34;
+  white-space: nowrap;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  animation: quietRailDrift 22s linear infinite;
+}
+
+.packet-trail {
+  position: absolute;
+  height: 1px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--cyan) 38%, transparent), transparent);
+  box-shadow: 0 0 10px color-mix(in oklab, var(--cyan) 18%, transparent);
+  opacity: 0.28;
+}
+
+.packet-trail::after {
+  content: '';
+  position: absolute;
+  right: 18%;
+  top: 50%;
+  width: 0.35rem;
+  height: 0.35rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--cyan) 65%, transparent);
+  transform: translateY(-50%);
+  box-shadow: 0 0 8px color-mix(in oklab, var(--cyan) 40%, transparent);
+}
+
+.packet-trail--top {
+  top: 20vh;
+  left: 16vw;
+  width: 22rem;
+  animation: quietPacketDrift 18s ease-in-out infinite;
+}
+
+.packet-trail--mid {
+  top: 52vh;
+  left: 9vw;
+  width: 17rem;
+  opacity: 0.2;
+  animation: quietPacketDrift 22s ease-in-out infinite reverse;
+}
+
+.packet-trail--low {
+  right: 18vw;
+  bottom: 16vh;
+  width: 14rem;
+  opacity: 0.16;
+  animation: quietPacketDrift 20s ease-in-out infinite;
+}
+
+.quiet-hud-label {
+  position: absolute;
+  font-family: var(--font-pixel);
+  font-size: 9px;
+  line-height: 1.1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--cyan) 30%, var(--muted));
+  opacity: 0.38;
+  text-shadow: 0 0 8px color-mix(in oklab, var(--cyan) 18%, transparent);
+}
+
+.quiet-hud-label::before {
+  content: '[';
+  margin-right: 0.2rem;
+  color: color-mix(in oklab, var(--magenta) 28%, var(--muted));
+}
+
+.quiet-hud-label::after {
+  content: ']';
+  margin-left: 0.2rem;
+  color: color-mix(in oklab, var(--magenta) 28%, var(--muted));
+}
+
+.quiet-hud-label--left {
+  top: 34vh;
+  left: 7rem;
+}
+
+.quiet-hud-label--top {
+  top: 12vh;
+  right: 25vw;
+}
+
+.quiet-hud-label--bottom {
+  right: 9vw;
+  bottom: 10vh;
+}
+
+.ascii-page-bg__shell {
+  position: absolute;
+  top: 12vh;
+  right: clamp(-1rem, 8vw, 8rem);
+  width: min(58vw, 46rem);
+  min-width: 20rem;
+  border: 1px solid color-mix(in oklab, var(--magenta) 34%, transparent);
+  background:
+    linear-gradient(135deg, color-mix(in oklab, var(--magenta) 6%, transparent), transparent 46%),
+    radial-gradient(circle at 45% 50%, color-mix(in oklab, var(--cyan) 10%, transparent), transparent 52%);
+  box-shadow: 0 0 40px color-mix(in oklab, var(--magenta) 12%, transparent);
+  opacity: 0.52;
+  animation: asciiDonutFloat 18s ease-in-out infinite;
+}
+
+.ascii-page-bg__shell::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(to bottom, transparent 0, transparent 5px, rgba(255,255,255,0.035) 6px),
+    linear-gradient(to right, transparent, color-mix(in oklab, var(--cyan) 10%, transparent), transparent);
+  mix-blend-mode: screen;
+  opacity: 0.42;
+}
+
+.ascii-page-bg__bar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.7rem;
+  border-bottom: 1px dashed color-mix(in oklab, var(--magenta) 46%, var(--line-2));
+  font-family: var(--font-pixel);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.ascii-page-bg__frame {
+  position: relative;
+  z-index: 1;
+  min-width: 42ch;
+  margin: 0;
+  padding: 1rem 0.9rem 1.2rem;
+  overflow: hidden;
+  font-family: var(--font-mono);
+  font-size: clamp(7px, 1.05vw, 10px);
+  line-height: 1;
+  letter-spacing: 0;
+  white-space: pre;
+  color: color-mix(in oklab, var(--cyan) 82%, var(--fg));
+  text-shadow:
+    0 0 8px color-mix(in oklab, var(--cyan) 48%, transparent),
+    0 0 18px color-mix(in oklab, var(--magenta) 32%, transparent);
+  animation: asciiDonutGlow 2.8s steps(2, end) infinite;
+}
+
+@media (max-width: 899px) {
+  .quiet-data-rail {
+    left: 0.6rem;
+    opacity: 0.22;
+  }
+
+  .packet-trail--top {
+    left: 10vw;
+    width: 12rem;
+  }
+
+  .packet-trail--mid,
+  .packet-trail--low,
+  .quiet-hud-label--bottom {
+    display: none;
+  }
+
+  .quiet-hud-label--left {
+    top: 28vh;
+    left: 2.5rem;
+  }
+
+  .quiet-hud-label--top {
+    right: 1rem;
+  }
+
+  .ascii-page-bg__shell {
+    top: 14vh;
+    right: -3rem;
+    width: min(86vw, 30rem);
+    opacity: 0.34;
+  }
+
+  .ascii-page-bg__frame {
+    font-size: 7px;
+  }
+}
+
+@media (max-width: 640px) {
+  .quiet-data-rail,
+  .packet-trail,
+  .quiet-hud-label {
+    opacity: 0.14;
+  }
+
+  .packet-trail--mid,
+  .packet-trail--low,
+  .quiet-hud-label--left {
+    display: none;
+  }
+
+  .ascii-page-bg__shell {
+    top: 18vh;
+    right: -4rem;
+    opacity: 0.24;
+  }
+}
+
+@keyframes asciiDonutFloat {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(-1.25rem, 0.9rem, 0); }
+}
+
+@keyframes asciiDonutGlow {
+  0%, 100% { opacity: 0.82; }
+  50% { opacity: 1; }
+}
+
+@keyframes quietRailDrift {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(0.8rem); }
+}
+
+@keyframes quietPacketDrift {
+  0%, 100% { transform: translateX(0); opacity: inherit; }
+  50% { transform: translateX(1.4rem); opacity: 0.34; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quiet-data-rail,
+  .packet-trail,
+  .ascii-page-bg__shell,
+  .ascii-page-bg__frame {
+    animation: none;
+  }
+}
+
+.site-main,
+header,
+footer {
+  position: relative;
+  z-index: 1;
+}
 
 /* Binary rain decorative column (small, tasteful) */
 .binary-rain {

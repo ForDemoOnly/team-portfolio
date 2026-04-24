@@ -24,15 +24,15 @@
     }
 
     function particleAt(x, y, seed) {
-      const life = Math.floor(Math.random() * 60 + 60);
+      const life = Math.floor(Math.random() * 28 + 34);
       const direction = Math.random() < 0.5 ? -1 : 1;
       return {
         value: bit(seed),
         color: seed % 3 === 0 ? '#00ff88' : seed % 5 === 0 ? '#ff3d96' : '#00e6ff',
         x,
         y,
-        vx: direction * (Math.random() * 0.6),
-        vy: -(0.8 + Math.random() * 0.8),
+        vx: direction * (Math.random() * 0.28),
+        vy: -(0.45 + Math.random() * 0.45),
         life,
         maxLife: life,
       };
@@ -53,7 +53,7 @@
     function updatePointer(event) {
       state.pointer.x = event.clientX;
       state.pointer.y = event.clientY;
-      if (Math.hypot(state.pointer.x - state.previous.x, state.pointer.y - state.previous.y) > 1.5) {
+      if (Math.hypot(state.pointer.x - state.previous.x, state.pointer.y - state.previous.y) > 4) {
         spawnParticle(state.pointer.x, state.pointer.y);
         state.previous.x = state.pointer.x;
         state.previous.y = state.pointer.y;
@@ -70,18 +70,18 @@
     function drawParticles() {
       const { ctx } = state;
       ctx.clearRect(0, 0, state.width, state.height);
-      ctx.font = '12px "JetBrains Mono", monospace';
+      ctx.font = '11px "JetBrains Mono", monospace';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.shadowBlur = 10;
+      ctx.shadowBlur = 6;
 
       for (let i = state.particles.length - 1; i >= 0; i--) {
         const particle = state.particles[i];
         particle.x += particle.vx;
         particle.y += particle.vy;
-        particle.life -= 1;
-        particle.vx += (Math.random() < 0.5 ? -1 : 1) / 75;
-        particle.vy -= Math.random() / 600;
+        particle.life -= 1.35;
+        particle.vx += (Math.random() < 0.5 ? -1 : 1) / 140;
+        particle.vy -= Math.random() / 1200;
 
         if (particle.life <= 0) {
           state.particles.splice(i, 1);

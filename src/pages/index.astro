@@ -15,7 +15,6 @@ const buildDate = new Date().toISOString().slice(0, 10);
   <!-- ========== HERO ========== -->
   <section class="mx-auto max-w-6xl px-6 pt-10 pb-16">
     <div>
-
       <!-- Boot log + pixel name -->
       <div class="px-frame is-cyan">
         <div class="px-inner p-6 md:p-8">
@@ -37,22 +36,23 @@ const buildDate = new Date().toISOString().slice(0, 10);
 
           <hr class="hr-dashed my-6" />
 
-          <p class="font-pixel text-[11px] tracking-wider text-[var(--muted)]">&gt;&gt; HELLO, VISITOR — WE ARE</p>
-          <h1 class="h-pixel text-[clamp(28px,6vw,64px)] mt-3 text-[var(--cyan)] glow-cyan">
-            {settings.team_name}
-          </h1>
-          <p class="mt-5 text-[15px] md:text-lg leading-7 max-w-2xl">
-            {settings.tagline}
-          </p>
+          <div>
+            <p class="font-pixel text-[11px] tracking-wider text-[var(--muted)]">&gt;&gt; HELLO, VISITOR — WE ARE</p>
+            <h1 class="h-pixel text-[clamp(28px,6vw,64px)] mt-3 text-[var(--cyan)] glow-cyan">
+              {settings.team_name}
+            </h1>
+            <p class="mt-5 text-[15px] md:text-lg leading-7 max-w-2xl">
+              {settings.tagline}
+            </p>
 
-          <div class="mt-7 flex flex-wrap gap-3">
-            <a href="/projects" class="px-btn is-primary">[ ./projects ]</a>
-            <a href="/team" class="px-btn">[ ./team ]</a>
-            <a href="/contact" class="px-btn">[ ./contact ]</a>
+            <div class="mt-7 flex flex-wrap gap-3">
+              <a href="/projects" class="px-btn is-primary">[ ./projects ]</a>
+              <a href="/team" class="px-btn">[ ./team ]</a>
+              <a href="/contact" class="px-btn">[ ./contact ]</a>
+            </div>
           </div>
         </div>
       </div>
-
     </div>
   </section>
 
