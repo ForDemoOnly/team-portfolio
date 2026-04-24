@@ -1,7 +1,6 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import { getCollection, render } from 'astro:content';
-import { hexId, barCells } from '@/lib/fx';
 
 const rawEntries = await getCollection('team');
 rawEntries.sort((a, b) => (a.data.sort_order ?? 0) - (b.data.sort_order ?? 0));
@@ -16,34 +15,24 @@ const members = await Promise.all(
 );
 
 const tones = ['is-cyan', 'is-magenta', 'is-amber', 'is-green'];
-const hpColors = ['text-[var(--green)]', 'text-[var(--cyan)]', 'text-[var(--magenta)]', 'text-[var(--amber)]'];
 ---
 
 <Layout title="Team">
   <section class="mx-auto max-w-6xl px-6 pt-12 pb-24">
-    <p class="font-pixel text-[11px] tracking-wider text-[var(--muted)]">REGISTRY › USERS</p>
-    <h1 class="h-pixel text-[clamp(28px,5vw,48px)] mt-3 text-[var(--magenta)] glow-magenta">./registry</h1>
+    <p class="font-pixel text-[11px] tracking-wider text-[var(--muted)]">./team</p>
+    <h1 class="h-pixel text-[clamp(28px,5vw,48px)] mt-3 text-[var(--magenta)] glow-magenta">team</h1>
     <p class="text-[13px] text-[var(--muted)] mt-3 font-pixel tracking-wider">
-      {String(members.length).padStart(3, '0')} nodes indexed · all operational
+      {members.length} {members.length === 1 ? 'member' : 'members'}
     </p>
 
     <ul class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      {members.map(({ id, data, Content, hasBody }, i) => {
+      {members.map(({ data, Content, hasBody }, i) => {
         const tone = tones[i % tones.length];
-        const hpColor = hpColors[i % hpColors.length];
-        const cells = barCells(90 + ((i * 7) % 11));
         const socials = Object.entries(data.socials ?? {}).filter(([, v]) => Boolean(v));
         return (
           <li class={`px-frame ${tone}`}>
             <div class="px-inner">
-              <div class="flex items-center justify-between px-4 py-2 border-b border-[var(--line-2)] text-[10px] font-pixel tracking-wider">
-                <span class="text-[var(--muted)]">ID·0x{hexId(id, 4)}</span>
-                <span class="text-[var(--green)] flex items-center gap-1">
-                  <span class="led on-green"></span>CONN:ESTABLISHED
-                </span>
-              </div>
-
-              <div class="aspect-[4/3] bg-[var(--bg-elev-2)] border-b border-[var(--line-2)] overflow-hidden relative">
+              <div class="aspect-[4/3] bg-[var(--bg-elev-2)] border-b border-[var(--line-2)] overflow-hidden">
                 {data.photo ? (
                   <img src={data.photo} alt={data.name} class="w-full h-full object-cover" />
                 ) : (
@@ -51,28 +40,12 @@ const hpColors = ['text-[var(--green)]', 'text-[var(--cyan)]', 'text-[var(--mage
                     <div class="font-pixel text-[64px] text-[var(--muted)] tracking-wider">{data.name.charAt(0).toUpperCase()}</div>
                   </div>
                 )}
-                <div class="absolute top-2 left-2 font-pixel text-[9px] tracking-widest text-[var(--muted)]/80 bg-black/40 px-1.5 py-0.5">
-                  SLOT·{String(i + 1).padStart(2, '0')}
-                </div>
               </div>
 
               <div class="p-4">
                 <div class="font-pixel text-[14px]">{data.name}</div>
                 <div class="text-[10px] font-pixel tracking-wider text-[var(--muted)] mt-1 uppercase">
-                  CLASS · {data.role}
-                </div>
-
-                <div class="mt-4 space-y-2 text-[10px] font-pixel tracking-wider">
-                  <div class="flex items-center gap-2">
-                    <span class="text-[var(--muted)] w-6">HP</span>
-                    <span class={hpColor}>{cells.filled}</span><span class="text-[var(--muted)]">{cells.empty}</span>
-                    <span class="ml-auto text-[var(--muted)]">lvl ∞</span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <span class="text-[var(--muted)] w-6">XP</span>
-                    <span class="text-[var(--violet)]">██████████</span>
-                    <span class="ml-auto text-[var(--muted)]">maxed</span>
-                  </div>
+                  {data.role}
                 </div>
 
                 {hasBody && (

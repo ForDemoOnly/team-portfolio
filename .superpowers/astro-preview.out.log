@@ -1,0 +1,6 @@
+
+> team-portfolio@0.1.0 preview
+> astro preview --host 127.0.0.1 --port 4323
+
+[42m[1m astro [22m[49m [32mv6.1.8[39m [2mready in[22m 14 [2mms[22m
+[2m┃[22m Local    [36mhttp://127.0.0.1:4323/[39m

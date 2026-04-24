@@ -11,39 +11,94 @@ const nav = [
 ];
 const pathname = Astro.url.pathname;
 const slug = settings.team_name.toLowerCase().replace(/\s+/g, '-');
+const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
 ---
 
 <header class="sticky top-0 z-30 border-b border-[var(--line-2)] bg-[rgba(5,6,10,0.82)] backdrop-blur">
   <div class="mx-auto max-w-6xl px-6 h-12 flex items-center justify-between text-[12px]">
     <a href="/" class="flex items-center gap-3 group">
       <span class="led on-cyan"></span>
-      <span class="font-pixel text-[13px] tracking-wider group-hover:text-[var(--cyan)] transition-colors">{slug}.net</span>
-      <span class="hidden sm:inline text-[var(--muted)]">· 0x{Math.abs(slug.split('').reduce((a,c)=>a+c.charCodeAt(0),0)).toString(16).toUpperCase().padStart(4,'0').slice(-4)}</span>
+      <span class="font-pixel text-[13px] tracking-wider group-hover:text-[var(--cyan)] transition-colors">{slug}</span>
     </a>
 
     <nav class="hidden md:flex items-center gap-1">
-      {nav.map((item) => {
-        const active = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
-        return (
+      {nav.map((item) => (
+        <a
+          href={item.href}
+          class:list={[
+            'px-3 py-1 font-pixel text-[11px] tracking-wider transition-colors',
+            isActive(item.href) ? 'text-[var(--cyan)]' : 'text-[var(--muted)] hover:text-[var(--fg)]',
+          ]}
+        >
+          [{isActive(item.href) ? '●' : ' '}] {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <button
+      type="button"
+      data-mobile-nav-toggle
+      aria-controls="mobile-nav"
+      aria-expanded="false"
+      aria-label="Menu"
+      class="md:hidden inline-flex items-center justify-center w-11 h-11 -mr-2 font-pixel text-[14px] tracking-wider text-[var(--muted)] hover:text-[var(--cyan)] transition-colors"
+    >
+      <span data-mobile-nav-icon>[≡]</span>
+    </button>
+  </div>
+
+  <nav
+    id="mobile-nav"
+    data-mobile-nav
+    hidden
+    class="md:hidden border-t border-[var(--line-2)] bg-[rgba(5,6,10,0.95)] backdrop-blur"
+  >
+    <ul class="mx-auto max-w-6xl px-6 py-2">
+      {nav.map((item) => (
+        <li>
           <a
             href={item.href}
             class:list={[
-              'px-3 py-1 font-pixel text-[11px] tracking-wider transition-colors',
-              active
-                ? 'text-[var(--cyan)]'
-                : 'text-[var(--muted)] hover:text-[var(--fg)]',
+              'block px-1 py-3 font-pixel text-[13px] tracking-wider transition-colors border-b border-[var(--line)] last:border-b-0',
+              isActive(item.href) ? 'text-[var(--cyan)]' : 'text-[var(--muted)] hover:text-[var(--fg)]',
             ]}
           >
-            [{active ? '●' : ' '}] {item.label}
+            [{isActive(item.href) ? '●' : ' '}] {item.label}
           </a>
-        );
-      })}
-    </nav>
-
-    <div class="hidden md:flex items-center gap-2 text-[var(--muted)]">
-      <span class="font-pixel text-[10px]">SIG</span>
-      <span class="tracking-tight text-[var(--green)]">▁▂▄▆█</span>
-      <span class="font-pixel text-[10px]">ONLINE</span>
-    </div>
-  </div>
+        </li>
+      ))}
+    </ul>
+  </nav>
 </header>
+
+<script is:inline>
+  function initMobileNav() {
+    const btn = document.querySelector('[data-mobile-nav-toggle]');
+    const panel = document.querySelector('[data-mobile-nav]');
+    const icon = document.querySelector('[data-mobile-nav-icon]');
+    if (!btn || !panel || !icon) return;
+
+    const setOpen = (open) => {
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      panel.hidden = !open;
+      icon.textContent = open ? '[×]' : '[≡]';
+    };
+
+    btn.addEventListener('click', () => {
+      setOpen(btn.getAttribute('aria-expanded') !== 'true');
+    });
+    panel.addEventListener('click', (e) => {
+      if (e.target instanceof HTMLAnchorElement) setOpen(false);
+    });
+  }
+
+  document.addEventListener('astro:page-load', initMobileNav);
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    const btn = document.querySelector('[data-mobile-nav-toggle]');
+    if (btn && btn.getAttribute('aria-expanded') === 'true') {
+      btn.click();
+      btn.focus();
+    }
+  });
+</script>

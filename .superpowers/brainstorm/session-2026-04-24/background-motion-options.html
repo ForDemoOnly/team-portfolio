@@ -1,0 +1,55 @@
+<h2>Chọn hướng background + interaction</h2>
+<p class="subtitle">Ba hướng dưới đây đều giữ màu theme hiện tại, khác nhau ở mức “đã mắt” và chi phí GPU.</p>
+
+<div class="cards">
+  <div class="card" data-choice="balanced-webgl" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#05060a;position:relative;overflow:hidden;min-height:220px">
+      <div style="position:absolute;inset:0;background-image:linear-gradient(90deg,rgba(26,29,46,.5) 1px,transparent 1px),linear-gradient(rgba(26,29,46,.5) 1px,transparent 1px);background-size:36px 36px"></div>
+      <div style="position:absolute;inset:0;opacity:.8;font:12px JetBrains Mono,monospace;color:#00e6ff;line-height:22px;white-space:pre;transform:skewY(-3deg)">0 1 0 1 1 0 0 1 0 1 1 0
+1 0 1 0 0 1 1 0 1 0 0 1
+0 0 1 1 0 1 0 1 1 0 1 0
+1 1 0 0 1 0 1 0 0 1 0 1
+0 1 1 0 1 0 0 1 1 0 1 0</div>
+      <div style="position:absolute;width:140px;height:140px;border-radius:999px;left:48%;top:34%;background:radial-gradient(circle,rgba(0,230,255,.6),rgba(255,61,150,.24) 36%,transparent 70%);filter:blur(10px)"></div>
+    </div>
+    <div class="card-body">
+      <h3>Recommended: WebGL Bit Field</h3>
+      <p>GPU shader vẽ mưa bit 01 liên tục, pointer tạo sóng/particle burst. Đủ nổi bật nhưng vẫn nhẹ và hợp portfolio.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="cinematic-webgl" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#05060a;position:relative;overflow:hidden;min-height:220px">
+      <div style="position:absolute;inset:-20%;background:radial-gradient(circle at 50% 45%,rgba(0,230,255,.35),transparent 30%),radial-gradient(circle at 62% 52%,rgba(255,61,150,.26),transparent 26%),linear-gradient(115deg,transparent,rgba(0,255,136,.12),transparent);filter:blur(8px)"></div>
+      <div style="position:absolute;inset:0;font:11px JetBrains Mono,monospace;color:#d6e4ff;opacity:.5;line-height:18px;white-space:pre;letter-spacing:4px">010101101001010101
+101001010110100101
+001011010010110100
+110100101101001011
+010110100101101001</div>
+    </div>
+    <div class="card-body">
+      <h3>Cinematic Antigravity</h3>
+      <p>Mạnh hơn: pointer hút/đẩy bit thành cụm sáng, nhiều glow và trails. Ấn tượng nhất nhưng cần giới hạn kỹ trên mobile.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="canvas-light" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#05060a;position:relative;overflow:hidden;min-height:220px">
+      <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(0,230,255,.18) 1px,transparent 1px);background-size:20px 20px"></div>
+      <div style="position:absolute;inset:0;font:12px JetBrains Mono,monospace;color:#535b7a;line-height:24px;white-space:pre">1 0 1 0 1 0 1 0
+0 1 0 1 0 1 0 1
+1 1 0 0 1 1 0 0
+0 0 1 1 0 0 1 1</div>
+      <div style="position:absolute;left:58%;top:42%;width:90px;height:90px;border:1px solid #00e6ff;box-shadow:0 0 32px #00e6ff"></div>
+    </div>
+    <div class="card-body">
+      <h3>Light Canvas Layer</h3>
+      <p>Canvas 2D, ít rủi ro nhất. Có bit cuộn và hover glow, nhưng kém cảm giác GPU/particle hơn hai hướng WebGL.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Click feedback</h3>
+  <p>Mình đề xuất kiểu Apple-like: mọi link/button/card click được sẽ nén nhẹ theo tâm chuột, giảm shadow, tăng highlight viền trong 120-180ms rồi bật lại bằng easing mềm. Không đổi layout, chỉ thêm cảm giác có lực nhấn.</p>
+</div>

@@ -1,37 +1,32 @@
 ---
+import { getCollection } from 'astro:content';
 import type { SiteSettings } from '@/lib/types';
 interface Props { settings: SiteSettings }
 const { settings } = Astro.props;
 const year = new Date().getFullYear();
 const socials = Object.entries(settings.socials ?? {}).filter(([, v]) => Boolean(v));
-const slug = settings.team_name.toLowerCase().replace(/\s+/g, '-');
+const teamCount = (await getCollection('team')).length;
+const projectCount = (await getCollection('projects')).length;
 ---
 
 <footer class="mt-24 border-t border-[var(--line-2)] bg-[var(--bg-elev)]">
   <div class="mx-auto max-w-6xl px-6 py-5 grid md:grid-cols-[auto_1fr_auto] items-center gap-4 text-[11px]">
-    <div class="flex items-center gap-2 text-[var(--muted)] font-pixel tracking-wider">
-      <span class="led on-green"></span>
-      <span class="text-[var(--green)]">LINK:UP</span>
+    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-[var(--muted)] font-pixel tracking-wider">
+      <span class="text-[var(--muted)]">{teamCount} {teamCount === 1 ? 'member' : 'members'}</span>
       <span>·</span>
-      <span>RX 482.3MB</span>
-      <span>·</span>
-      <span>TX 291.7MB</span>
-      <span>·</span>
-      <span>LOSS 0.00%</span>
+      <span class="text-[var(--muted)]">{projectCount} {projectCount === 1 ? 'project' : 'projects'}</span>
     </div>
 
-    <div class="text-center text-[var(--muted)] tracking-widest">
-      ──── end-of-transmission ────
-    </div>
+    <div class="hidden md:block"></div>
 
-    <div class="flex items-center justify-end gap-4 text-[var(--muted)]">
+    <div class="flex flex-wrap items-center justify-start md:justify-end gap-x-4 gap-y-1 text-[var(--muted)]">
       {socials.map(([key, url]) => (
         <a href={url} target="_blank" rel="noopener" class="hover:text-[var(--cyan)] transition-colors font-pixel tracking-wider">
           [{key}]
         </a>
       ))}
       {settings.contact_email && (
-        <a href={`mailto:${settings.contact_email}`} class="hover:text-[var(--cyan)] transition-colors">
+        <a href={`mailto:${settings.contact_email}`} class="hover:text-[var(--cyan)] transition-colors break-all">
           {settings.contact_email}
         </a>
       )}
@@ -39,6 +34,6 @@ const slug = settings.team_name.toLowerCase().replace(/\s+/g, '-');
   </div>
 
   <div class="border-t border-[var(--line)] py-2 text-center text-[10px] font-pixel text-[var(--muted)] tracking-wider">
-    © {year} {settings.team_name} — built on bytes — /{slug}
+    © {year} {settings.team_name}
   </div>
 </footer>

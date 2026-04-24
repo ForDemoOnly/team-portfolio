@@ -1,61 +1,41 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import { getSiteSettings } from '@/lib/content';
-import { hexId } from '@/lib/fx';
 
 const settings = await getSiteSettings();
 const email = settings.contact_email ?? 'hello@example.com';
-const nonce = hexId(email, 8);
+const socials = Object.entries(settings.socials ?? {}).filter(([, v]) => Boolean(v));
 ---
 
 <Layout title="Contact">
   <section class="mx-auto max-w-2xl px-6 pt-12 pb-24">
-    <p class="font-pixel text-[11px] tracking-wider text-[var(--muted)]">SOCKET › /dev/tcp</p>
-    <h1 class="h-pixel text-[clamp(28px,5vw,48px)] mt-3 text-[var(--green)] glow-green">./open_channel</h1>
+    <p class="font-pixel text-[11px] tracking-wider text-[var(--muted)]">./contact</p>
+    <h1 class="h-pixel text-[clamp(28px,5vw,48px)] mt-3 text-[var(--green)] glow-green">contact</h1>
 
-    <!-- Handshake visualization -->
     <div class="mt-8 px-frame is-green">
       <div class="px-inner p-5 md:p-6 text-[13px] leading-7">
-        <div class="flex items-center justify-between text-[10px] font-pixel tracking-wider text-[var(--muted)]">
-          <span>tcp_handshake.log</span>
-          <span>nonce·0x{nonce}</span>
-        </div>
-        <div class="boot-log mt-4 text-[13px] leading-6 font-mono">
-          <div>
-            <span class="text-[var(--cyan)]">[client]</span> <span class="text-[var(--fg)]/70">→</span>
-            <span class="text-[var(--amber)]"> SYN </span>
-            <span class="text-[var(--muted)]"> seq=0</span>
-          </div>
-          <div>
-            <span class="text-[var(--magenta)]">[server]</span> <span class="text-[var(--fg)]/70">→</span>
-            <span class="text-[var(--amber)]"> SYN-ACK </span>
-            <span class="text-[var(--muted)]"> seq=0 ack=1</span>
-          </div>
-          <div>
-            <span class="text-[var(--cyan)]">[client]</span> <span class="text-[var(--fg)]/70">→</span>
-            <span class="text-[var(--amber)]"> ACK </span>
-            <span class="text-[var(--muted)]"> ack=1</span>
-          </div>
-          <div class="mt-2">
-            <span class="text-[var(--green)]">STATE:</span>
-            <span class="text-[var(--green)] glow-green font-pixel tracking-wider"> ESTABLISHED</span>
-            <span class="cursor"></span>
-          </div>
+        <div class="grid sm:grid-cols-[10ch_1fr] gap-x-4">
+          <span class="text-[var(--muted)]">email</span>
+          <a href={`mailto:${email}`} class="link-accent break-all">{email}</a>
+          {socials.map(([k, url]) => (
+            <>
+              <span class="text-[var(--muted)]">{k}</span>
+              <a href={url} target="_blank" rel="noopener" class="link-accent break-all">{url}</a>
+            </>
+          ))}
         </div>
       </div>
     </div>
 
-    <!-- Contact -->
     <div class="mt-8">
       <h2 class="h-pixel text-2xl">Let's talk.</h2>
       <p class="mt-4 text-[15px] text-[var(--fg)]/85">
-        Send a packet our way at
-        <a href={`mailto:${email}`} class="link-accent">{email}</a>.
-        Or find us in the channels at the bottom of the page.
+        Reach us at <a href={`mailto:${email}`} class="link-accent">{email}</a>,
+        or through any of the channels above.
       </p>
 
       <div class="mt-6">
-        <a href={`mailto:${email}`} class="px-btn is-primary">[ transmit ↗ ]</a>
+        <a href={`mailto:${email}`} class="px-btn is-primary">[ send email ↗ ]</a>
       </div>
     </div>
   </section>

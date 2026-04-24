@@ -1,7 +1,6 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import { getCollection, getEntry, render } from 'astro:content';
-import { fakeBytes, fakePing, hexId } from '@/lib/fx';
 
 export async function getStaticPaths() {
   const entries = await getCollection('projects');
@@ -15,34 +14,17 @@ if (!entry) return Astro.redirect('/projects');
 const { Content } = await render(entry);
 const hasBody = Boolean((entry.body ?? '').trim());
 const data = entry.data;
-const bytes = fakeBytes(entry.id);
-const ping = fakePing(entry.id);
-const id = hexId(entry.id, 8);
 ---
 
 <Layout title={data.title} description={data.summary}>
   <article class="mx-auto max-w-3xl px-6 pt-12 pb-24">
     <a href="/projects" class="text-[12px] text-[var(--muted)] hover:text-[var(--cyan)] font-pixel tracking-wider">← ../projects</a>
 
-    <!-- traceroute panel -->
-    <div class="mt-6 px-frame is-amber">
-      <div class="px-inner p-4 md:p-5 text-[12px] leading-6">
-        <div class="flex items-center justify-between text-[10px] font-pixel tracking-wider text-[var(--muted)]">
-          <span>traceroute {entry.id}</span>
-          <span>0x{id}</span>
-        </div>
-        <pre class="mt-3 text-[var(--fg)]/85 text-[12px] leading-[1.55]">{`hop  address                 time     status
- 1   127.0.0.1               0.4ms    ${entry.id}.router
- 2   projects.local          1.2ms    ack
- 3   ${entry.id.padEnd(16)}${ping.padStart(7)}   ${data.featured ? 'FEATURED' : 'OK'}`}</pre>
-      </div>
-    </div>
-
     <!-- title block -->
     <div class="mt-6 px-frame is-cyan">
       <div class="px-inner p-6 md:p-8">
         <div class="flex items-center justify-between text-[10px] font-pixel tracking-wider">
-          <span class="text-[var(--muted)]">PKT·0x{id}</span>
+          <span class="text-[var(--muted)]">./{entry.id}</span>
           <span class={data.featured ? 'text-[var(--magenta)]' : 'text-[var(--green)]'}>
             {data.featured ? '★ FEATURED' : '● OK'}
           </span>
@@ -53,11 +35,11 @@ const id = hexId(entry.id, 8);
         </h1>
         <p class="mt-4 text-lg text-[var(--fg)]/85">{data.summary}</p>
 
-        <div class="mt-5 flex flex-wrap gap-2 text-[10px] font-pixel tracking-wider">
-          <span class="chip">BYTES · {bytes}</span>
-          <span class="chip">RTT · {ping}</span>
-          {data.link_url && <a href={data.link_url} target="_blank" rel="noopener" class="chip hover:text-[var(--cyan)] hover:border-[var(--cyan)]">OPEN ↗</a>}
-        </div>
+        {data.link_url && (
+          <div class="mt-5 flex flex-wrap gap-2 text-[10px] font-pixel tracking-wider">
+            <a href={data.link_url} target="_blank" rel="noopener" class="chip hover:text-[var(--cyan)] hover:border-[var(--cyan)]">open ↗</a>
+          </div>
+        )}
 
         {data.image && (
           <div class="mt-8 overflow-hidden border border-[var(--line-2)] bg-[var(--bg-elev-2)]">
