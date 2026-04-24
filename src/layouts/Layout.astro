@@ -1,5 +1,7 @@
 ---
 import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import ClockCursorEffect from '@/components/public/ClockCursorEffect.astro';
 import SiteHeader from '@/components/public/SiteHeader.astro';
 import SiteFooter from '@/components/public/SiteFooter.astro';
 import { getSiteSettings } from '@/lib/content';
@@ -30,6 +32,7 @@ const pageDescription = description ?? settings.tagline;
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Silkscreen:wght@400;700&display=swap"
     />
     <title>{pageTitle}</title>
+    <ClientRouter />
   </head>
   <body class="min-h-dvh flex flex-col">
     {!hideChrome && <SiteHeader settings={settings} />}
@@ -37,5 +40,55 @@ const pageDescription = description ?? settings.tagline;
       <slot />
     </main>
     {!hideChrome && <SiteFooter settings={settings} />}
+    <ClockCursorEffect />
+    <script is:inline>
+      (() => {
+        if (window.__pressFeedbackStarted) return;
+        window.__pressFeedbackStarted = true;
+
+        const selector = 'a[href], button, summary, [role="button"], input, textarea, select, .px-frame, .px-btn, .chip';
+        let active = null;
+        let timer = 0;
+
+        function release() {
+          if (!active) return;
+          active.classList.remove('is-pressing');
+          active = null;
+        }
+
+        document.addEventListener('pointerdown', (event) => {
+          if (!(event.target instanceof Element)) return;
+          const target = event.target.closest(selector);
+          if (!(target instanceof HTMLElement)) return;
+
+          const rect = target.getBoundingClientRect();
+          const x = ((event.clientX - rect.left) / Math.max(rect.width, 1)) * 100;
+          const y = ((event.clientY - rect.top) / Math.max(rect.height, 1)) * 100;
+
+          window.clearTimeout(timer);
+          release();
+          active = target;
+          active.classList.add('pressable', 'is-pressing');
+          active.style.setProperty('--press-x', x.toFixed(2) + '%');
+          active.style.setProperty('--press-y', y.toFixed(2) + '%');
+          timer = window.setTimeout(release, 190);
+        }, { passive: true });
+
+        document.addEventListener('pointerup', () => {
+          window.clearTimeout(timer);
+          timer = window.setTimeout(release, 90);
+        }, { passive: true });
+
+        document.addEventListener('pointercancel', release, { passive: true });
+        document.addEventListener('keydown', (event) => {
+          if (event.key !== 'Enter' && event.key !== ' ') return;
+          if (!(event.target instanceof HTMLElement)) return;
+          const target = event.target.closest(selector);
+          if (!(target instanceof HTMLElement)) return;
+          target.classList.add('pressable', 'is-pressing');
+          window.setTimeout(() => target.classList.remove('is-pressing'), 150);
+        });
+      })();
+    </script>
   </body>
 </html>

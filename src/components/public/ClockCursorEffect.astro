@@ -1,0 +1,141 @@
+<script>
+  function mountBitFairyDustCursor() {
+    const existing = window.__clockCursorEffect;
+    if (existing?.canvas?.isConnected) return;
+    if (existing?.destroy) existing.destroy();
+
+    const host = document.body;
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (media.matches) return;
+
+    const state = {
+      canvas: null,
+      ctx: null,
+      raf: 0,
+      width: window.innerWidth,
+      height: window.innerHeight,
+      pointer: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
+      previous: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
+      particles: [],
+    };
+
+    function bit(seed) {
+      return Math.sin(seed * 91.73) * 10000 % 1 > 0.5 ? '1' : '0';
+    }
+
+    function particleAt(x, y, seed) {
+      const life = Math.floor(Math.random() * 60 + 60);
+      const direction = Math.random() < 0.5 ? -1 : 1;
+      return {
+        value: bit(seed),
+        color: seed % 3 === 0 ? '#00ff88' : seed % 5 === 0 ? '#ff3d96' : '#00e6ff',
+        x,
+        y,
+        vx: direction * (Math.random() * 0.6),
+        vy: -(0.8 + Math.random() * 0.8),
+        life,
+        maxLife: life,
+      };
+    }
+
+    function resize() {
+      state.width = window.innerWidth;
+      state.height = window.innerHeight;
+      if (!state.canvas) return;
+      state.canvas.width = state.width;
+      state.canvas.height = state.height;
+    }
+
+    function spawnParticle(x, y) {
+      state.particles.push(particleAt(x, y, performance.now() + state.particles.length));
+    }
+
+    function updatePointer(event) {
+      state.pointer.x = event.clientX;
+      state.pointer.y = event.clientY;
+      if (Math.hypot(state.pointer.x - state.previous.x, state.pointer.y - state.previous.y) > 1.5) {
+        spawnParticle(state.pointer.x, state.pointer.y);
+        state.previous.x = state.pointer.x;
+        state.previous.y = state.pointer.y;
+      }
+    }
+
+    function updateTouch(event) {
+      if (!event.touches.length) return;
+      state.pointer.x = event.touches[0].clientX;
+      state.pointer.y = event.touches[0].clientY;
+      spawnParticle(state.pointer.x, state.pointer.y);
+    }
+
+    function drawParticles() {
+      const { ctx } = state;
+      ctx.clearRect(0, 0, state.width, state.height);
+      ctx.font = '12px "JetBrains Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.shadowBlur = 10;
+
+      for (let i = state.particles.length - 1; i >= 0; i--) {
+        const particle = state.particles[i];
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+        particle.life -= 1;
+        particle.vx += (Math.random() < 0.5 ? -1 : 1) / 75;
+        particle.vy -= Math.random() / 600;
+
+        if (particle.life <= 0) {
+          state.particles.splice(i, 1);
+          continue;
+        }
+
+        const alpha = Math.max(particle.life / particle.maxLife, 0);
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = particle.color;
+        ctx.shadowColor = particle.color;
+        ctx.fillText(particle.value, particle.x, particle.y);
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function frame() {
+      drawParticles();
+      state.raf = window.requestAnimationFrame(frame);
+    }
+
+    function destroy() {
+      window.cancelAnimationFrame(state.raf);
+      window.removeEventListener('resize', resize);
+      host.removeEventListener('mousemove', updatePointer);
+      host.removeEventListener('touchmove', updateTouch);
+      host.removeEventListener('touchstart', updateTouch);
+      media.removeEventListener('change', handleMotionChange);
+      state.canvas?.remove();
+      window.__clockCursorEffect = null;
+    }
+
+    function handleMotionChange(event) {
+      if (event.matches) destroy();
+    }
+
+    state.canvas = document.createElement('canvas');
+    state.ctx = state.canvas.getContext('2d');
+    state.canvas.style.position = 'fixed';
+    state.canvas.style.inset = '0';
+      state.canvas.style.pointerEvents = 'none';
+      state.canvas.style.zIndex = '999';
+      host.appendChild(state.canvas);
+
+    resize();
+    host.addEventListener('mousemove', updatePointer, { passive: true });
+    host.addEventListener('touchmove', updateTouch, { passive: true });
+    host.addEventListener('touchstart', updateTouch, { passive: true });
+    window.addEventListener('resize', resize);
+    media.addEventListener('change', handleMotionChange);
+    frame();
+
+    window.__clockCursorEffect = { destroy, canvas: state.canvas };
+  }
+
+  mountBitFairyDustCursor();
+  document.addEventListener('astro:page-load', mountBitFairyDustCursor);
+</script>
