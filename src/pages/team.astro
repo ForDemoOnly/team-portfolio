@@ -32,15 +32,15 @@ const tones = ['is-cyan', 'is-magenta', 'is-amber', 'is-green'];
         return (
           <li class={`px-frame ${tone}`}>
             <div class="px-inner">
-              {data.photo ? (
-                <div class="crt-screen aspect-[4/3] mx-3 mt-3">
-                  <img src={data.photo} alt={data.name} />
-                </div>
-              ) : (
-                <div class="aspect-[4/3] bg-[var(--bg-elev-2)] border-b border-[var(--line-2)] overflow-hidden flex items-center justify-center">
-                  <div class="font-pixel text-[64px] text-[var(--muted)] tracking-wider">{data.name.charAt(0).toUpperCase()}</div>
-                </div>
-              )}
+              <div class="aspect-[4/3] bg-[var(--bg-elev-2)] border-b border-[var(--line-2)] overflow-hidden">
+                {data.photo ? (
+                  <img src={data.photo} alt={data.name} class="w-full h-full object-cover" />
+                ) : (
+                  <div class="w-full h-full flex items-center justify-center">
+                    <div class="font-pixel text-[64px] text-[var(--muted)] tracking-wider">{data.name.charAt(0).toUpperCase()}</div>
+                  </div>
+                )}
+              </div>
 
               <div class="p-4">
                 <div class="font-pixel text-[14px]">{data.name}</div>
