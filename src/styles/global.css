@@ -328,8 +328,15 @@ summary.is-pressing::after,
 .md-body img {
   max-width: 100%;
   height: auto;
-  border: 1px solid var(--line-2);
   margin-block: 0.8em;
+  border-radius: 18px / 30px;
+  filter: contrast(1.08) saturate(1.18) brightness(1.02) hue-rotate(-2deg);
+  box-shadow:
+    0 0 0 2px #0a0c14,
+    0 0 0 8px #1a1d2e,
+    0 0 0 9px #050608,
+    0 12px 24px rgba(0, 0, 0, 0.5),
+    inset 0 0 60px rgba(0, 0, 0, 0.45);
 }
 
 .md-body hr { border: 0; border-top: 1px dashed var(--line-2); margin-block: 1.2em; }
@@ -398,6 +405,148 @@ summary.is-pressing::after,
   letter-spacing: 0.06em;
   text-transform: lowercase;
   color: var(--muted);
+}
+
+/* ==================== CRT screen (retro curved monitor) ==================== */
+
+.crt-screen {
+  position: relative;
+  overflow: hidden;
+  background: #02030a;
+  border-radius: 44px / 78px;
+  padding: 14px;
+  box-shadow:
+    /* outer chassis bevel */
+    0 0 0 2px #2a2f48,
+    0 0 0 6px #0a0c14,
+    0 0 0 14px #1f2336,
+    0 0 0 16px #050608,
+    /* drop shadow under chassis */
+    0 22px 44px rgba(0, 0, 0, 0.7),
+    0 6px 14px rgba(0, 0, 0, 0.55),
+    /* inner glass darkening */
+    inset 0 0 0 2px #000,
+    inset 0 0 80px rgba(0, 0, 0, 0.85),
+    inset 0 0 24px color-mix(in oklab, var(--cyan) 26%, transparent);
+  isolation: isolate;
+  animation: crtJitter 7s steps(2, end) infinite;
+}
+
+.crt-screen > img,
+.crt-screen > video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 36px / 64px;
+  filter:
+    contrast(1.18)
+    saturate(1.45)
+    brightness(1.06)
+    hue-rotate(-3deg)
+    drop-shadow(1px 0 0 rgba(255, 0, 80, 0.55))
+    drop-shadow(-1px 0 0 rgba(0, 230, 255, 0.55));
+  transform: scale(1.06);
+  transform-origin: center;
+  animation: crtRoll 9s linear infinite;
+}
+
+/* scanlines + RGB phosphor stripes */
+.crt-screen::before {
+  content: '';
+  position: absolute;
+  inset: 14px;
+  border-radius: 36px / 64px;
+  pointer-events: none;
+  background:
+    /* dark horizontal scanlines */
+    repeating-linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 0,
+      rgba(0, 0, 0, 0) 1px,
+      rgba(0, 0, 0, 0.55) 2px,
+      rgba(0, 0, 0, 0) 3px
+    ),
+    /* RGB aperture-grille phosphor stripes */
+    repeating-linear-gradient(
+      to right,
+      rgba(255, 0, 80, 0.18) 0,
+      rgba(255, 0, 80, 0.18) 1px,
+      rgba(0, 255, 80, 0.18) 1px,
+      rgba(0, 255, 80, 0.18) 2px,
+      rgba(0, 140, 255, 0.18) 2px,
+      rgba(0, 140, 255, 0.18) 3px
+    );
+  mix-blend-mode: multiply;
+  z-index: 2;
+  animation: crtScanShift 8s linear infinite;
+}
+
+/* vignette + glare + curved-glass shine + moving scan beam */
+.crt-screen::after {
+  content: '';
+  position: absolute;
+  inset: 14px;
+  border-radius: 36px / 64px;
+  pointer-events: none;
+  background:
+    /* moving scan beam */
+    linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 48%,
+      rgba(255, 255, 255, 0.08) 50%,
+      transparent 52%,
+      transparent 100%
+    ),
+    /* top-left glare */
+    linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 32%),
+    radial-gradient(ellipse at 28% 16%, rgba(255, 255, 255, 0.18), transparent 38%),
+    /* deep corner vignette */
+    radial-gradient(ellipse at 50% 50%, transparent 38%, rgba(0, 0, 0, 0.55) 78%, rgba(0, 0, 0, 0.95) 100%);
+  z-index: 3;
+  background-size: 100% 200%, 100% 100%, 100% 100%, 100% 100%;
+  animation: crtBeam 4.5s linear infinite, crtFlicker 3.2s steps(2, end) infinite;
+}
+
+@keyframes crtFlicker {
+  0%, 92%, 100% { opacity: 1; }
+  93% { opacity: 0.78; }
+  94% { opacity: 1; }
+  96% { opacity: 0.85; }
+  97% { opacity: 1; }
+  98% { opacity: 0.92; }
+}
+
+@keyframes crtJitter {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(0.5px, -0.5px); }
+  40% { transform: translate(-0.5px, 0.5px); }
+  60% { transform: translate(0.5px, 0.5px); }
+  80% { transform: translate(-0.5px, -0.5px); }
+}
+
+@keyframes crtRoll {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 -100%; }
+}
+
+@keyframes crtScanShift {
+  0% { background-position: 0 0, 0 0; }
+  100% { background-position: 0 4px, 0 0; }
+}
+
+@keyframes crtBeam {
+  0% { background-position: 0 -100%, 0 0, 0 0, 0 0; }
+  100% { background-position: 0 100%, 0 0, 0 0, 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crt-screen,
+  .crt-screen > img,
+  .crt-screen > video,
+  .crt-screen::before,
+  .crt-screen::after { animation: none; }
 }
 
 /* ==================== misc ==================== */
